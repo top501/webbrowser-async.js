@@ -1,4 +1,4 @@
-var Asyn = (function () {
+var Asyn = (function() {
 
     function Asyn() {
 
@@ -8,22 +8,20 @@ var Asyn = (function () {
     var _taski = -1;
     var _taskResultIndex = -1
 
-    Asyn.prototype.await = function (func,extend) {
+    Asyn.prototype.await = function(func, extend) {
         _taski++;
-        _taskAsyn.push(
-            {
-                method: function (index) {
-                    func.call(this, index != 0 ? _taskAsyn[index - 1].asynResult : null)
-                },
-                asynResult: null,
-                index: _taski,
-                extend: extend
-            }
-        );
+        _taskAsyn.push({
+            method: function(index) {
+                func.call(this, index != 0 ? _taskAsyn[index - 1].asynResult : null)
+            },
+            asynResult: null,
+            index: _taski,
+            extend: extend
+        });
         return this;
     }
 
-    Asyn.prototype.setAsynResult = function (data) {
+    Asyn.prototype.setAsynResult = function(data) {
         _taskResultIndex++;
         var taskData = _taskAsyn[_taskResultIndex];
         taskData.asynResult = data;
@@ -32,7 +30,7 @@ var Asyn = (function () {
         }
     }
 
-    Asyn.prototype.start = function () {
+    Asyn.prototype.start = function() {
         //执行链式调用
         _taskAsyn[0].method(0);
     }
