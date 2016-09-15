@@ -4,47 +4,103 @@
 <head>
     <title>await.js示例</title>
     <meta charset="utf-8">
-    
-    <script src="await.js"></script>
+
+    <script src="asyn-await.js"></script>
 </head>
+
 <body>
+    <h2 style="text-align: center;">请等待十几秒查看异步结果</h2>
     <script>
-        function ajax(data, callback) {
-            setTimeout(function () {
+        function ajax(data, callback, t) {
+            setTimeout(function() {
                 callback(data);
-            }, 2000);
+            }, t);
         }
 
         //用例
         var _asyn = new Asyn();
-        
-        //await 内的代码段含有一个异步操作（0个或者1个异步），不支持多个
+
+        //一个await 对应一个异步（0个或者1个异步），不支持多个
         //每一个await的代码段内必须含有setAsynResult方法
-        _asyn.await(function () {
-            ajax("第一个异步", function (data) {
+        _asyn.await(function() {
+            //执行异步前的javascript代码
+            var ajaxPostData = "";
+            for (var i = 0; i < 5; i++) {
+                ajaxPostData += i.toString();
+            }
+
+            //执行异步
+            ajax("第1个异步:" + ajaxPostData, function(data) {
+
+                //设置异步结果
                 _asyn.setAsynResult(data);
-            });
+
+            }, 5000);
         });
 
-        _asyn.await(function (preAsynResult) {
-            ajax(preAsynResult + "->第二个异步", function (data) {
+        //取得上一个异步的结果 preAsynResult，并执行第二个异步
+        _asyn.await(function(preAsynResult) {
+
+            //由于第二个异步需要上一个异步的结果
+            var asynData2 = preAsynResult + "->第2个异步";
+            ajax(asynData2, function(data) {
                 _asyn.setAsynResult(data);
-            });
+            }, 200);
         });
 
-        _asyn.await(function (preAsynResult) {
-            ajax(preAsynResult + "->第三个异步", function (data) {
+
+        _asyn.await(function(preAsynResult) {
+            ajax(preAsynResult + "->第3个异步", function(data) {
                 _asyn.setAsynResult(data);
-            });
+            }, 2000);
         });
 
-        _asyn.await(function (preAsynResult) {
-            ajax(preAsynResult + "->第四个异步", function (data) {
+        _asyn.await(function(preAsynResult) {
+
+            //使用this访问扩展数据
+            var extendData = this.extend;
+
+            //这里可以不需要异步，执行正常操作
+            for (var i = 0; i < 10; i++) {
+                extendData += i;
+            }
+            extendData = preAsynResult + "->" + extendData;
+
+            //记得设置异步结果，供下一次调用
+            _asyn.setAsynResult(extendData);
+        }, "扩展数据");
+
+
+        _asyn.await(function(preAsynResult) {
+            ajax(preAsynResult + "->第4个异步", function(data) {
+                _asyn.setAsynResult(data);
+            }, 200);
+        });
+
+
+        _asyn.await(function(preAsynResult) {
+            _asyn.setAsynResult(preAsynResult);
+        });
+
+
+        //循环阻塞异步
+        for (var i = 5; i < 10; i++) {
+            _asyn.await(function(preAsynResult) {
+                ajax(preAsynResult + "->第" + this.extend + "个异步", function(data) {
+                    _asyn.setAsynResult(data);
+                }, 1000);
+            }, i);
+        }
+
+
+        _asyn.await(function(preAsynResult) {
+            ajax(preAsynResult + "->最后一个异步", function(data) {
                 alert(data);
                 _asyn.setAsynResult(data);
-            });
+            }, 200);
         });
 
+        //开始执行定义的异步，按顺序执行
         _asyn.start();
     </script>
 </body>
