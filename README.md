@@ -8,7 +8,7 @@ javasript asyn library
       
 
 ``` javascript
-       //请先引用asyn-await.js库
+       //请先引入asyn-await.js库
        // https://github.com/waitaction/webbrower-await.js
 	   //<script src="asyn-await.js" ></script>
 
@@ -20,6 +20,9 @@ javasript asyn library
         }
 
         //=================演示异步阻塞调用 开始==================
+      
+      
+        //声明一个阻塞式异步的实例
         var _asyn = new Asyn();
 
         //一个await 对应一个异步（0个或者1个异步），不支持多个
@@ -40,6 +43,8 @@ javasript asyn library
             }, 5000);
         });
 
+
+
         //取得上一个异步的结果 preAsynResult，并执行第二个异步
         _asyn.await(function(preAsynResult) {
 
@@ -51,11 +56,14 @@ javasript asyn library
         });
 
 
+
         _asyn.await(function(preAsynResult) {
             ajax(preAsynResult + "->第3个异步", function(data) {
                 _asyn.setAsynResult(data);
             }, 2000);
         });
+
+
 
         _asyn.await(function(preAsynResult) {
 
@@ -73,6 +81,7 @@ javasript asyn library
         }, "扩展数据");
 
 
+
         _asyn.await(function(preAsynResult) {
             ajax(preAsynResult + "->第4个异步", function(data) {
                 _asyn.setAsynResult(data);
@@ -80,19 +89,24 @@ javasript asyn library
         });
 
 
+
         _asyn.await(function(preAsynResult) {
             _asyn.setAsynResult(preAsynResult);
         });
 
 
+
         //循环阻塞异步
         for (var i = 5; i < 10; i++) {
+        
             _asyn.await(function(preAsynResult) {
                 ajax(preAsynResult + "->第" + this.extend + "个异步", function(data) {
                     _asyn.setAsynResult(data);
                 }, 1000);
             }, i);
+            
         }
+
 
 
         _asyn.await(function(preAsynResult) {
@@ -102,9 +116,15 @@ javasript asyn library
             }, 200);
         });
 
+
         //开始执行定义的异步，按顺序执行
         _asyn.start();
+        
+        
         //=================演示异步阻塞调用 结束==================
+        
+        
+        
         
          //=================      说明      ==================
 
