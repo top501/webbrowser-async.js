@@ -1,6 +1,5 @@
 var Asyn = (function () {
 
-
     function Asyn() {
 
     }
