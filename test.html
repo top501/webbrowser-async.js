@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>await.js示例</title>
+    <meta charset="utf-8">
+    
+    <script src="await.js"></script>
+</head>
+<body>
+    <script>
+        function ajax(data, callback) {
+            setTimeout(function () {
+                callback(data);
+            }, 2000);
+        }
+
+        //用例
+        var _asyn = new Asyn();
+        
+        //await 内的代码段含有一个异步操作（0个或者1个异步），不支持多个
+        //每一个await的代码段内必须含有setAsynResult方法
+        _asyn.await(function () {
+            ajax("第一个异步", function (data) {
+                _asyn.setAsynResult(data);
+            });
+        });
+
+        _asyn.await(function (preAsynResult) {
+            ajax(preAsynResult + "->第二个异步", function (data) {
+                _asyn.setAsynResult(data);
+            });
+        });
+
+        _asyn.await(function (preAsynResult) {
+            ajax(preAsynResult + "->第三个异步", function (data) {
+                _asyn.setAsynResult(data);
+            });
+        });
+
+        _asyn.await(function (preAsynResult) {
+            ajax(preAsynResult + "->第四个异步", function (data) {
+                alert(data);
+                _asyn.setAsynResult(data);
+            });
+        });
+
+        _asyn.start();
+    </script>
+</body>
+
+</html>
