@@ -2,38 +2,10 @@
 javasript asyn library
 
 脚本 多级回调问题一直让人头疼，代码不堪入目。
+
 因为这个问题，写了一个 以同步的方式调用异步的脚本，解决多级回调的头疼问题。
 
-       //=================      说明      ==================
-
-		//声明一个阻塞式异步的实例
-        var _asyn = new Asyn();
-        
-        //异步代码段
-        _asyn.await(function(preAsynResult) {
-	        ...调用异步(最多只能一个异步方法)或同步代码，记得在异步的回调 调setAsynResult方法
-	        _asyn.setAsynResult(preAsynResult);
-        });
-        
-        //异步代码段
-        _asyn.await(function(preAsynResult) {
-	        ...调用异步(最多只能一个异步方法)或同步代码，记得在异步的回调 调setAsynResult方法
-	        _asyn.setAsynResult(preAsynResult);
-        });
-			        .
-			        .
-			        .
-			        .
-			        .
-	    //n个异步代码段
-		_asyn.await(function(preAsynResult) {
-	        ...调用异步(最多只能一个异步方法)或同步代码，记得在异步的回调 调setAsynResult方法
-	        _asyn.setAsynResult(preAsynResult);
-        });
-        
-        //执行阻塞式的异步代码段
-         _asyn.start();
-
+      
 
 ``` javascript
        //请先引用asyn-await.js库
@@ -134,6 +106,35 @@ javasript asyn library
         _asyn.start();
         //=================演示异步阻塞调用 结束==================
         
+         //=================      说明      ==================
+
+	//声明一个阻塞式异步的实例
+        var _asyn = new Asyn();
+        
+        //异步代码段
+        _asyn.await(function(preAsynResult) {
+	        ...调用异步(最多只能一个异步方法)或同步代码，记得在异步的回调 调setAsynResult方法
+	        _asyn.setAsynResult(preAsynResult);
+        });
+        
+        //异步代码段
+        _asyn.await(function(preAsynResult) {
+	        ...调用异步(最多只能一个异步方法)或同步代码，记得在异步的回调 调setAsynResult方法
+	        _asyn.setAsynResult(preAsynResult);
+        });
+			        .
+			        .
+			        .
+			        .
+			        .
+	    //n个异步代码段
+		_asyn.await(function(preAsynResult) {
+	        ...调用异步(最多只能一个异步方法)或同步代码，记得在异步的回调 调setAsynResult方法
+	        _asyn.setAsynResult(preAsynResult);
+        });
+        
+        //执行阻塞式的异步代码段
+         _asyn.start();
  
 ```
 
