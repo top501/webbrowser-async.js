@@ -10,16 +10,16 @@ javasript asyn library
 	//执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
      _asyn(function() {  
              //异步代码段
-            await (function() { 代码段 });
-            await (function() { 代码段 });
-            await (function() { 代码段 });
+            await (function($scope) { 代码段;nextAwait();return(); });
+            await (function($scope) { 代码段;nextAwait();return(); });
+            await (function($scope) { 代码段;nextAwait();return(); });
                     .
 			        .
 	        //n个异步代码段
 			        .    
 			        .              
             //异步代码段
-            await (function() { 代码段 });
+            await (function($scope) { 代码段;nextAwait();return(); });
         });
 ```
 

@@ -1,21 +1,23 @@
-var Asyn = (function() {
+var Asyn = (function () {
 
     function Asyn() {
         this.currAsynResult = {};
         this.preAsynResult = {};
+        this.scope = {};
     }
 
     var _taskAsyn = [];
     var _taski = -1;
     var _taskResultIndex = -1
 
-    Asyn.prototype.await = function(func, extend) {
+    Asyn.prototype.await = function (func, extend) {
         var that = this;
+        var $scope = this.scope;
         _taski++;
         _taskAsyn.push({
-            method: function(index) {
+            method: function (index) {
                 that.preAsynResult = index != 0 ? _taskAsyn[index - 1].asynResult : null;
-                func.call(this, index != 0 ? _taskAsyn[index - 1].asynResult : null)
+                func.call(this, $scope)
             },
             asynResult: null,
             index: _taski,
@@ -24,7 +26,7 @@ var Asyn = (function() {
         return this;
     }
 
-    Asyn.prototype.setAsynResult = function(data) {
+    Asyn.prototype.setAsynResult = function (data) {
         _taskResultIndex++;
         var taskData = _taskAsyn[_taskResultIndex];
         taskData.asynResult = data;
@@ -33,7 +35,7 @@ var Asyn = (function() {
         }
     }
 
-    Asyn.prototype.start = function() {
+    Asyn.prototype.start = function () {
         //执行链式调用
         _taskAsyn[0].method(0);
     }
@@ -52,7 +54,7 @@ function _asyn(func) {
     __asyn.start();
 }
 
-function await (_func, extend) {
+function await(_func, extend) {
     __asyn.await(_func, extend)
 }
 
@@ -61,5 +63,9 @@ function getPreResult() {
 }
 
 function setCurrResult(data) {
+    __asyn.setAsynResult(data);
+}
+
+function nextAwait(data) {
     __asyn.setAsynResult(data);
 }
