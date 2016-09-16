@@ -1,7 +1,8 @@
 var Asyn = (function() {
 
     function Asyn() {
-
+        this.currAsynResult = {};
+        this.preAsynResult = {};
     }
 
     var _taskAsyn = [];
@@ -9,9 +10,11 @@ var Asyn = (function() {
     var _taskResultIndex = -1
 
     Asyn.prototype.await = function(func, extend) {
+        var that = this;
         _taski++;
         _taskAsyn.push({
             method: function(index) {
+                that.preAsynResult = index != 0 ? _taskAsyn[index - 1].asynResult : null;
                 func.call(this, index != 0 ? _taskAsyn[index - 1].asynResult : null)
             },
             asynResult: null,
@@ -38,3 +41,25 @@ var Asyn = (function() {
     return Asyn;
 
 }());
+//=======进一步简化操作=======
+
+
+var __asyn = {}
+
+function _asyn(func) {
+    __asyn = new Asyn();
+    func.call(__asyn);
+    __asyn.start();
+}
+
+function await (_func, extend) {
+    __asyn.await(_func, extend)
+}
+
+function getPreResult() {
+    return __asyn.preAsynResult;
+}
+
+function setCurrResult(data) {
+    __asyn.setAsynResult(data);
+}
