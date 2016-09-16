@@ -12,34 +12,34 @@
     <h2 style="text-align: center;">请等待十几秒查看异步结果</h2>
     <script>
         function ajax(data, callback, t) {
-            setTimeout(function () {
+            setTimeout(function() {
                 callback(data);
             }, t);
         }
 
         // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
-        _asyn(function () {
+        _asyn(function() {
 
             //一个await 最多允行一个异步，不支持多个
             //执行下一代码块 nextAwait();return(); 方法
-            await(function ($scope) {
-            
-                //使用this访问扩展数据
-                var extendData = this.extend;
-                //执行异步
-                ajax("第1个异步:" + extendData, function (data) {
-                    $scope.data1 = data;
-                    //执行下一个await代码块
-                    nextAwait();
-                    return;
-                }, 5000);
-            },
+            await (function($scope) {
+
+                    //使用this访问扩展数据
+                    var extendData = this.extend;
+                    //执行异步
+                    ajax("第1个异步:" + extendData, function(data) {
+                        $scope.data1 = data;
+                        //执行下一个await代码块
+                        nextAwait();
+                        return;
+                    }, 5000);
+                },
                 //设置扩展数据，方便 await 代码段内调用，如循环执行异步阻塞时
                 "扩展数据");
 
-            await(function ($scope) {
+            await (function($scope) {
                 var asynData2 = $scope.data1 + "->第2个异步";
-                ajax(asynData2, function (data) {
+                ajax(asynData2, function(data) {
                     $scope.data2 = data;
                     //执行下一个await代码块
                     nextAwait();
@@ -48,9 +48,9 @@
             });
 
 
-            await(function ($scope) {
+            await (function($scope) {
                 var asynData3 = $scope.data2 + "->第3个异步";
-                ajax(asynData3, function (data) {
+                ajax(asynData3, function(data) {
                     $scope.data3 = data;
                     //执行下一个await代码块
                     nextAwait();
@@ -60,10 +60,10 @@
 
             //循环异步阻塞
             for (var i = 4; i < 10; i++) {
-                await(function ($scope) {
+                await (function($scope) {
                     var extendData = this.extend;
                     var preResult = $scope["data" + (extendData - 1)];
-                    ajax(preResult + "->第" + this.extend + "个异步", function (data) {
+                    ajax(preResult + "->第" + this.extend + "个异步", function(data) {
                         if (extendData >= 9) {
                             alert(data);
                         }
@@ -76,9 +76,6 @@
             }
 
         });
-
-
-
     </script>
 </body>
 
