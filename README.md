@@ -5,9 +5,25 @@ javasript asyn library
 
 因为这个问题，写了一个 以同步的方式调用异步的脚本，解决多级回调的头疼问题。
 
-      
+        // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
+        _asyn(function() {  
+             //异步代码段
+            await (function() { 代码段 });
+            await (function() { 代码段 });
+            await (function() { 代码段 });
+        			.
+			        .
+	        //n个异步代码段
+			        .    
+			        .              
+            //异步代码段
+            await (function() { 代码段 });
+        });
 
 ``` javascript
+
+       //=================演示异步阻塞调用 开始==================           
+
        //请先引入asyn-await.js库
        // https://github.com/waitaction/webbrower-await.js
 	   //<script src="asyn-await.js" ></script>
@@ -18,10 +34,7 @@ javasript asyn library
                 callback(data);
             }, t);
         }
-
-        //=================演示异步阻塞调用 开始==================
-      
-      
+   
        // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
         _asyn(function() {
 
@@ -81,40 +94,6 @@ javasript asyn library
         
         //=================演示异步阻塞调用 结束==================
         
-        
-        
-        
-         //=================      说明      ==================
-
-        // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
-        _asyn(function() {  
-
-             //异步代码段
-            await (function() {
-
-                ...执行 异步(最多只能一个异步方法)/同步 代码，记得在异步的回调 调setCurrResult方法
-
-                //设置当前的异步结果
-                setCurrResult(data);   
-            });
-        
-        			.
-			        .
-			        .
-			        .
-			        .
-	    //n个异步代码段
-                   
-            //异步代码段
-            await (function() {
-                //取得上一个异步的结果 getPreResult() 方法，如果该方法与你项目有冲突，请更改源码
-                var preResult = getPreResult();
-
-                ...执行 异步(最多只能一个异步方法)/同步 代码，记得在异步的回调 调setAsynResult方法
-
-                //设置当前的异步结果
-                setCurrResult(data);   
-            });
  
 ```
 
