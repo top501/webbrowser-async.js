@@ -23,7 +23,7 @@
             //一个await 最多允行一个异步，不支持多个
             //执行下一代码块 nextAwait();return(); 方法
             await(function ($scope) {
-                console.log(this);
+            
                 //使用this访问扩展数据
                 var extendData = this.extend;
                 //执行异步
