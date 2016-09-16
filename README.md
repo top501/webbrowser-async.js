@@ -1,17 +1,19 @@
 # webbrower-await.js
 javasript asyn library
 
+
+
 脚本 多级回调问题一直让人头疼，代码不堪入目。
 
-因为这个问题，写了一个 以同步的方式调用异步的脚本，解决多级回调的头疼问题。
-
-        // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
-        _asyn(function() {  
+写了一个 以同步的方式调用异步的脚本，解决多级回调的头疼问题。
+``` code
+	//执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
+     _asyn(function() {  
              //异步代码段
             await (function() { 代码段 });
             await (function() { 代码段 });
             await (function() { 代码段 });
-        			.
+                    .
 			        .
 	        //n个异步代码段
 			        .    
@@ -19,6 +21,9 @@ javasript asyn library
             //异步代码段
             await (function() { 代码段 });
         });
+```
+
+演示异步阻塞调用
 
 ``` javascript
 
