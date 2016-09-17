@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>await.js示例</title>
+    <title>asyn-await.js示例</title>
     <meta charset="utf-8">
 
     <script src="asyn-await.js"></script>
@@ -11,71 +11,68 @@
 <body>
     <h2 style="text-align: center;">请等待十几秒查看异步结果</h2>
     <script>
+
         function ajax(data, callback, t) {
-            setTimeout(function() {
+            setTimeout(function () {
                 callback(data);
             }, t);
         }
 
-        // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
-        _asyn(function() {
 
-            //一个await 最多允行一个异步，不支持多个
-            //执行下一代码块 nextAwait();return(); 方法
-            await (function($scope) {
 
-                    //使用this访问扩展数据
-                    var extendData = this.extend;
-                    //执行异步
-                    ajax("第1个异步:" + extendData, function(data) {
-                        $scope.data1 = data;
-                        //执行下一个await代码块
-                        nextAwait();
-                        return;
-                    }, 5000);
-                },
-                //设置扩展数据，方便 await 代码段内调用，如循环执行异步阻塞时
-                "扩展数据");
+        /*
+         * 执行 $async 内的所有using语句块，把异步伪装成同步模式，解块多级回调代码难以阅读的问题
+         * $scope:作用域
+         * $using:用于定义using语句块
+         * $done:用在using语句块内的方法，表示当前using语句块执行完成
+         * $dispose:仅用在最后一个using语句块，表示释放所有引用与内存
+         * 注意：using 语句块不能再次包含 using 语句块，但可以包含 $async .
+        */
+        $async(function ($scope, $using, $done, $dispose) {
 
-            await (function($scope) {
-                var asynData2 = $scope.data1 + "->第2个异步";
-                ajax(asynData2, function(data) {
-                    $scope.data2 = data;
-                    //执行下一个await代码块
-                    nextAwait();
-                    return;
+            var myData = "";
+
+            //uisng语句块，建议按步聚/功能划分using语句块
+            // 比如：登陆操作
+            $using(function () {
+
+                ajax("登陆操作", function (data) {
+                    myData += data + ">";
+                    //当前using语句块执行完成
+                    $done();
                 }, 200);
+
             });
 
+            //using语句块，建议按步聚/功能划分using语句块
+            // 比如：登陆完成
+            $using(function () {
 
-            await (function($scope) {
-                var asynData3 = $scope.data2 + "->第3个异步";
-                ajax(asynData3, function(data) {
-                    $scope.data3 = data;
-                    //执行下一个await代码块
-                    nextAwait();
-                    return;
+                ajax("登陆完成", function (data) {
+                    myData += data + ">";
+                    //当前using语句块执行完成
+                    $done();
                 }, 200);
+
             });
 
-            //循环异步阻塞
-            for (var i = 4; i < 10; i++) {
-                await (function($scope) {
-                    var extendData = this.extend;
-                    var preResult = $scope["data" + (extendData - 1)];
-                    ajax(preResult + "->第" + this.extend + "个异步", function(data) {
-                        if (extendData >= 9) {
-                            alert(data);
-                        }
-                        $scope["data" + extendData] = data;
-                        //执行下一个await代码块
-                        nextAwait();
-                        return;
-                    }, 1000);
-                }, i);
-            }
+            //using语句块
+            // 比如：获取个人信息
+            $using(function () {
 
+                ajax("获取个人信息", function (data) {
+                    myData += data;
+                    //所有using语句块执行完成，释放内存
+                    alert(myData);
+                    $dispose();
+                }, 200);
+
+            })
         });
+
+
+
+
     </script>
 </body>
 
