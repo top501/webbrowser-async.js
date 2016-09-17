@@ -2,9 +2,6 @@
 javasript asyn library
 
 
-
-javascript多级回调问题一直让人头疼，代码不堪入目。
-
 ``` code
      $async(function ($scope, $using, $done, $dispose) {
             $using(function () {  });
