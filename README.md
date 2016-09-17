@@ -3,23 +3,16 @@ javasript asyn library
 
 
 
-脚本 多级回调问题一直让人头疼，代码不堪入目。
+javascript多级回调问题一直让人头疼，代码不堪入目。
 
-写了一个 以同步的方式调用异步的脚本，解决多级回调的头疼问题。
 ``` code
-	//执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
-     _asyn(function() {  
-             //异步代码段
-            await (function($scope) { 代码段;nextAwait();return(); });
-            await (function($scope) { 代码段;nextAwait();return(); });
-            await (function($scope) { 代码段;nextAwait();return(); });
-                    .
-			        .
-	        //n个异步代码段
-			        .    
-			        .              
-            //异步代码段
-            await (function($scope) { 代码段;nextAwait();return(); });
+     $async(function ($scope, $using, $done, $dispose) {
+            $using(function () {  });
+			$using(function () {  });
+					.
+					.
+					.
+            $using(function () {  });
         });
 ```
 
@@ -29,72 +22,55 @@ javasript asyn library
 
        //=================演示异步阻塞调用 开始==================           
 
-       //请先引入asyn-await.js库
-       // https://github.com/waitaction/webbrower-await.js
-	   //<script src="asyn-await.js" ></script>
+        /*
+         * 执行 $async 内的所有using语句块，把异步伪装成同步模式，解块多级回调代码难以阅读的问题
+         * $scope:作用域
+         * $using:用于定义using语句块
+         * $done:用在using语句块内的方法，表示当前using语句块执行完成
+         * $dispose:仅用在最后一个using语句块，表示释放所有引用与内存
+         * 注意：using 语句块不能再次包含 using 语句块，但可以包含 $async .
+         * https://github.com/waitaction/webbrowser-async.js
+        */
+        $async(function ($scope, $using, $done, $dispose) {
 
-       //模拟一个ajax调用
-       function ajax(data, callback, t) {
-            setTimeout(function() {
-                callback(data);
-            }, t);
-        }
-   
-       // 执行 _asyn 方法，里面定义的 await 代码段将会以同步的方式执行
-        _asyn(function() {
+            var myData = "";
 
-            //一个await 对应一个异步（0个或者1个异步），不支持多个
-            //每一个await的代码段内必须含有 setCurrResult(data) 方法,如果该方法与你项目有冲突，请更改源码
-            await (function() {
-                    console.log(this);
-                    //使用this访问扩展数据
-                    var extendData = this.extend;
-                    //执行异步
-                    ajax("第1个异步:" + extendData, function(data) {
-                        //设置异步结果
-                        setCurrResult(data);
-                    }, 5000);
-                },
-                //设置扩展数据，方便 await 代码段内调用，如循环执行异步阻塞时
-                "扩展数据");
+            //uisng语句块，建议按步聚/功能划分using语句块
+            // 比如：登陆操作
+            $using(function () {
 
-
-            await (function() {
-                //取得上一个异步的结果 getPreResult() 方法，如果该方法与你项目有冲突，请更改源码
-                var preResult = getPreResult();
-                //第二个异步需要上一个异步的结果
-                var asynData2 = preResult + "->第2个异步";
-                ajax(asynData2, function(data) {
-                    setCurrResult(data);
+                ajax("登陆操作", function (data) {
+                    myData += data + ">";
+                    //当前using语句块执行完成
+                    $done();
                 }, 200);
+
             });
 
+            //using语句块，建议按步聚/功能划分using语句块
+            // 比如：登陆完成
+            $using(function () {
 
-            await (function() {
-                //取得上一个异步的结果 getPreResult() 方法，如果该方法与你项目有冲突，请更改源码
-                var preResult = getPreResult();
-                //第三个异步需要上一个异步的结果
-                var asynData3 = preResult + "->第3个异步";
-                ajax(asynData3, function(data) {
-
-                    setCurrResult(data);
+                ajax("登陆完成", function (data) {
+                    myData += data + ">";
+                    //当前using语句块执行完成
+                    $done();
                 }, 200);
+
             });
 
-            //循环异步阻塞
-            for (var i = 5; i < 10; i++) {
-                await (function() {
-                    var preResult = getPreResult();
-                    var extendData = this.extend;
-                    ajax(preResult + "->第" + this.extend + "个异步", function(data) {
-                        if (extendData >= 9) {
-                            alert(data);
-                        }
-                        setCurrResult(data);
-                    }, 1000);
-                }, i);
-            }
+            //using语句块
+            // 比如：获取个人信息
+            $using(function () {
 
+                ajax("获取个人信息", function (data) {
+                    myData += data;
+                    //所有using语句块执行完成，释放内存
+                    alert(myData);
+                    $dispose();
+                }, 200);
+
+            })
         });
         
         //=================演示异步阻塞调用 结束==================

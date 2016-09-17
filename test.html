@@ -27,6 +27,7 @@
          * $done:用在using语句块内的方法，表示当前using语句块执行完成
          * $dispose:仅用在最后一个using语句块，表示释放所有引用与内存
          * 注意：using 语句块不能再次包含 using 语句块，但可以包含 $async .
+         * https://github.com/waitaction/webbrowser-async.js
         */
         $async(function ($scope, $using, $done, $dispose) {
 
